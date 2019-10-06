@@ -11,13 +11,16 @@
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let cliente of clientes">
+      <tr *ngFor="let cliente of clientes | paginate: { itemsPerPage: 5, currentPage: paginaAtual }; let i = index">
         <td>{{cliente.razaoSocial}}</td>
         <td>{{cliente.cnpj}}</td>
         <td class="text-center"><a (click)="getClienteById(cliente.id)" class="btn btn-warning"><i class="fa fa-pencil text-white"></i></a></td>
         <td class="text-center"><a (click)="deleteCliente(cliente.id)" class="btn btn-danger"><i class="fa fa-trash text-white"></i></a></td>
       </tr>
     </tbody>
+    <tfoot>
+      
+    </tfoot>  
   </table>
 </div>
 
@@ -56,8 +59,7 @@
             <div *ngIf="angForm.get('cnpj').getError('cnpjNotValid')">
               O CNPJ é inválido.
             </div>
-          </div>
-          
+          </div>          
 
         </form>
 

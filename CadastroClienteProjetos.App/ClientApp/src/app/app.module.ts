@@ -7,7 +7,8 @@ import { SlimLoadingBarModule } from 'ng2-slim-loading-bar';
 import { AppComponent } from './app.component';
 import { ClienteComponent } from '../cliente/cliente-component';
 import { ClienteService } from '../service/cliente.service';
-import { NgxMaskModule } from 'ngx-mask'
+import { NgxMaskModule } from 'ngx-mask';
+import { NgxPaginationModule } from 'ngx-pagination';
 
 export const options: Partial<NgxMaskModule> | (() => Partial<NgxMaskModule>) = {};
 
@@ -22,6 +23,7 @@ export const options: Partial<NgxMaskModule> | (() => Partial<NgxMaskModule>) = 
     SlimLoadingBarModule,
     ReactiveFormsModule,
     HttpClientModule,
+    NgxPaginationModule,
     NgxMaskModule.forRoot(options)
   ],
   providers: [ClienteService],

@@ -15,6 +15,7 @@ export class ClienteComponent implements OnInit {
   clientes: Cliente[];
   cliente: any = {};
   angForm: FormGroup;
+  public paginaAtual = 1;
 
   constructor(private fb: FormBuilder,
     private bs: ClienteService) {

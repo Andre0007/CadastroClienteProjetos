@@ -17,9 +17,9 @@ namespace CadastroClienteProjetos.xUnit
         #region [ Cadeia de conexão ]
 
         private int? IdGlobal = null;
-        private BaseRepository<Cliente> repository;
+        private readonly BaseRepository<Cliente> repository;
         private static DbContextOptions<SQLServerContext> dbContextOptions { get; }
-        private static string connectionString = "Server=DESKTOP-0R6B5S6;Database=ClienteProjeto_Dev;User ID=sa;Password=1234";
+        private static readonly string connectionString = "Server=DESKTOP-0R6B5S6;Database=ClienteProjeto_Dev;User ID=sa;Password=1234";
 
         static ClienteTest()
         {
@@ -28,7 +28,7 @@ namespace CadastroClienteProjetos.xUnit
 
         public ClienteTest()
         {
-            SQLServerContext context = new SQLServerContext(dbContextOptions);
+            var context = new SQLServerContext(dbContextOptions);
             repository = new BaseRepository<Cliente>(context);
         }
 
@@ -39,60 +39,60 @@ namespace CadastroClienteProjetos.xUnit
         [Fact]
         public async void Task_GetById_Return_OkResult()
         {
-            //Arrange  
-            int postId = 1;
-            ClienteController controller = new ClienteController(repository);           
+            //Arrange
+            const int postId = 1;
+            var controller = new ClienteController(repository);
 
-            //Act  
-            IActionResult data = await controller.GetByOne(postId);
+            //Act
+            var data = await controller.GetByOne(postId);
 
-            //Assert  
+            //Assert
             Assert.IsType<OkObjectResult>(data);
         }
 
         [Fact]
         public async void Task_GetById_Return_NotFoundResult()
         {
-            //Arrange 
-            int postId = 3;
-            ClienteController controller = new ClienteController(repository);
+            //Arrange
+            const int postId = 3;
+            var controller = new ClienteController(repository);
 
-            //Act  
-            IActionResult data = await controller.GetByOne(postId);
+            //Act
+            var data = await controller.GetByOne(postId);
 
-            //Assert  
+            //Assert
             Assert.IsType<NotFoundResult>(data);
         }
 
         [Fact]
         public async void Task_GetById_Return_BadRequestResult()
         {
-            //Arrange 
+            //Arrange
             int? postId = null;
-            ClienteController controller = new ClienteController(repository);
+            var controller = new ClienteController(repository);
 
-            //Act  
-            IActionResult data = await controller.GetByOne(postId);
+            //Act
+            var data = await controller.GetByOne(postId);
 
-            //Assert  
+            //Assert
             Assert.IsType<BadRequestResult>(data);
         }
 
         [Fact]
         public async void Task_GetPostById_MatchResult()
         {
-            //Arrange 
+            //Arrange
             int? postId = 1;
-            ClienteController controller = new ClienteController(repository);
+            var controller = new ClienteController(repository);
 
-            //Act  
-            IActionResult data = await controller.GetByOne(postId);
+            //Act
+            var data = await controller.GetByOne(postId);
 
-            //Assert  
+            //Assert
             Assert.IsType<OkObjectResult>(data);
 
-            OkObjectResult okResult = data.Should().BeOfType<OkObjectResult>().Subject;
-            Cliente get = okResult.Value.Should().BeAssignableTo<Cliente>().Subject;
+            var okResult = data.Should().BeOfType<OkObjectResult>().Subject;
+            var get = okResult.Value.Should().BeAssignableTo<Cliente>().Subject;
 
             Assert.Equal("00000000000191", get.cnpj);
             Assert.Equal("Microsoft SA", get.razaoSocial);
@@ -105,41 +105,41 @@ namespace CadastroClienteProjetos.xUnit
         [Fact]
         public async void Task_GetAll_Return_OkResult()
         {
-            //Arrange  
-            ClienteController controller = new ClienteController(repository);
+            //Arrange
+            var controller = new ClienteController(repository);
 
-            //Act  
-            IActionResult data = await controller.Get();
+            //Act
+            var data = await controller.Get();
 
-            //Assert  
+            //Assert
             Assert.IsType<OkObjectResult>(data);
         }
 
         [Fact]
         public void Task_GetPosts_Return_BadRequestResult()
         {
-            //Arrange  
-            ClienteController controller = new ClienteController(repository);
+            //Arrange
+            var controller = new ClienteController(repository);
 
-            //Act  
+            //Act
             var data = controller.Get();
             data = null;
 
-            //Assert  
-            if (data != null)               
+            //Assert
+            if (data != null)
                 Assert.IsType<BadRequestResult>(data);
         }
 
         [Fact]
         public async void Task_GetAll_MatchResult()
         {
-            //Arrange  
-            ClienteController controller = new ClienteController(repository);
+            //Arrange
+            var controller = new ClienteController(repository);
 
-            //Act  
-            IActionResult data = await controller.Get();
+            //Act
+            var data = await controller.Get();
 
-            //Assert  
+            //Assert
             Assert.IsType<OkObjectResult>(data);
 
             var okResult = data.Should().BeOfType<OkObjectResult>().Subject;
@@ -161,15 +161,15 @@ namespace CadastroClienteProjetos.xUnit
         [Fact]
         public async void Task_Add_ValidData_Return_OkResult()
         {
-            //Arrange  
-            ClienteController controller = new ClienteController(repository);
-            Cliente newCliente = new Cliente() { razaoSocial = "Teste, 1 2 3", cnpj = "92230633000104" };
+            //Arrange
+            var controller = new ClienteController(repository);
+            var newCliente = new Cliente { razaoSocial = "Teste, 1 2 3", cnpj = "92230633000104" };
 
-            //Act  
-            dynamic data = await controller.Post(newCliente);
+            //Act
+            dynamic data = await controller.PostAsync(newCliente);
             IdGlobal = data.Value.Value.id;
 
-            //Assert  
+            //Assert
             Assert.IsType<OkObjectResult>(data);
         }
 
@@ -178,15 +178,15 @@ namespace CadastroClienteProjetos.xUnit
         //{
         //    Thread.Sleep(1000);
 
-        //    //Arrange  
+        //    //Arrange
         //    ClienteController controller = new ClienteController(repository);
         //    Cliente newCliente = new Cliente() { razaoSocial = "Teste, 1 2 3", cnpj = "92230633000104" };
 
-        //    //Act              
+        //    //Act
         //    var data = await controller.Post(newCliente);
         //    //var teste = data.StatusCode;
 
-        //    //Assert  
+        //    //Assert
         //    Assert.IsType<BadRequestObjectResult>(data);
 
         //    //Deletando o teste 1 Post
@@ -197,18 +197,16 @@ namespace CadastroClienteProjetos.xUnit
         [Fact]
         public async void Task_Add_ValidData_MatchResult()
         {
-            //Thread.Sleep(2000);
+            //Arrange
+            var controller = new ClienteController(repository);
+            var newCliente = new Cliente { razaoSocial = "Teste, 1 2 3", cnpj = "76739863000147" };
 
-            //Arrange  
-            ClienteController controller = new ClienteController(repository);
-            Cliente newCliente = new Cliente() { razaoSocial = "Teste, 1 2 3", cnpj = "76739863000147" };
-
-            //Act  
-            var data = await controller.Post(newCliente);
+            //Act
+            var data = await controller.PostAsync(newCliente);
             //var data2 = data;
             //IdGlobal = data.Value.Value.id;
 
-            //Assert  
+            //Assert
             Assert.IsType<OkObjectResult>(data);
             var okResult = data.Should().BeOfType<OkObjectResult>().Subject;
 
@@ -222,11 +220,11 @@ namespace CadastroClienteProjetos.xUnit
         //[Fact]
         //public async void Task_Update_ValidData_Return_OkResult()
         //{
-        //    //Arrange  
+        //    //Arrange
         //    var controller = new PostController(repository);
         //    var postId = 2;
 
-        //    //Act  
+        //    //Act
         //    var existingPost = await controller.GetPost(postId);
         //    var okResult = existingPost.Should().BeOfType<OkObjectResult>().Subject;
         //    var result = okResult.Value.Should().BeAssignableTo<PostViewModel>().Subject;
@@ -239,18 +237,18 @@ namespace CadastroClienteProjetos.xUnit
 
         //    var updatedData = await controller.UpdatePost(post);
 
-        //    //Assert  
+        //    //Assert
         //    Assert.IsType<OkResult>(updatedData);
         //}
 
         //[Fact]
         //public async void Task_Update_InvalidData_Return_BadRequest()
         //{
-        //    //Arrange  
+        //    //Arrange
         //    var controller = new PostController(repository);
         //    var postId = 2;
 
-        //    //Act  
+        //    //Act
         //    var existingPost = await controller.GetPost(postId);
         //    var okResult = existingPost.Should().BeOfType<OkObjectResult>().Subject;
         //    var result = okResult.Value.Should().BeAssignableTo<PostViewModel>().Subject;
@@ -263,18 +261,18 @@ namespace CadastroClienteProjetos.xUnit
 
         //    var data = await controller.UpdatePost(post);
 
-        //    //Assert  
+        //    //Assert
         //    Assert.IsType<BadRequestResult>(data);
         //}
 
         //[Fact]
         //public async void Task_Update_InvalidData_Return_NotFound()
         //{
-        //    //Arrange  
+        //    //Arrange
         //    var controller = new PostController(repository);
         //    var postId = 2;
 
-        //    //Act  
+        //    //Act
         //    var existingPost = await controller.GetPost(postId);
         //    var okResult = existingPost.Should().BeOfType<OkObjectResult>().Subject;
         //    var result = okResult.Value.Should().BeAssignableTo<PostViewModel>().Subject;
@@ -288,55 +286,55 @@ namespace CadastroClienteProjetos.xUnit
 
         //    var data = await controller.UpdatePost(post);
 
-        //    //Assert  
+        //    //Assert
         //    Assert.IsType<NotFoundResult>(data);
         //}
 
         #endregion
 
-        #region [ Delete ]  
+        #region [ Delete ]
 
         [Fact]
         public async void Task_Delete_Return_OkResult()
         {
             Thread.Sleep(2000);
 
-            //Arrange  
-            int postId = IdGlobal.Value;
-            ClienteController controller = new ClienteController(repository);
+            //Arrange
+            var postId = IdGlobal.Value;
+            var controller = new ClienteController(repository);
 
-            //Act  
-            IActionResult data = await controller.Delete(postId);
+            //Act
+            var data = await controller.Delete(postId);
 
-            //Assert  
+            //Assert
             Assert.IsType<OkResult>(data);
         }
 
         [Fact]
         public async void Task_Delete_Return_NotFoundResult()
         {
-            //Arrange 
-            int postId = 999999;
-            ClienteController controller = new ClienteController(repository);
+            //Arrange
+            const int postId = 999999;
+            var controller = new ClienteController(repository);
 
-            //Act  
-            IActionResult data = await controller.Delete(postId);
+            //Act
+            var data = await controller.Delete(postId);
 
-            //Assert  
+            //Assert
             Assert.IsType<NotFoundResult>(data);
         }
 
         [Fact]
         public async void Task_Delete_Return_BadRequestResult()
         {
-            //Arrange  
-            ClienteController controller = new ClienteController(repository);
+            //Arrange
+            var controller = new ClienteController(repository);
             int? postId = null;
 
-            //Act  
+            //Act
             var data = await controller.Delete(postId);
 
-            //Assert  
+            //Assert
             Assert.IsType<BadRequestResult>(data);
         }
 

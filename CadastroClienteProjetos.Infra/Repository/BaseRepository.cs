@@ -10,8 +10,8 @@ namespace CadastroClienteProjetos.Infra.Repository
 {
     public class BaseRepository<T> : IRepository<T> where T : class
     {
-        protected DbSet<T> dbSet;
-        protected readonly SQLServerContext _dbContext;
+        readonly DbSet<T> dbSet;
+        readonly SQLServerContext _dbContext;
         public BaseRepository(SQLServerContext dbContext)
         {
             _dbContext = dbContext;
@@ -26,16 +26,9 @@ namespace CadastroClienteProjetos.Infra.Repository
         public IEnumerable<T> FindSingleBy(Expression<Func<T, bool>> predicate)
         {
             if (predicate != null)
-            {
-                using (_dbContext)
-                {
-                    return dbSet.Where(predicate).ToList();
-                }
-            }
+                return dbSet.Where(predicate).ToList();
             else
-            {
                 throw new ArgumentNullException("Predicate value must be passed to FindSingleBy<T>.");
-            }
         }
 
         public T GetById(object id)
@@ -57,16 +50,15 @@ namespace CadastroClienteProjetos.Infra.Repository
 
         public void Delete(object id)
         {
-            T entityToDelete = dbSet.Find(id);
+            var entityToDelete = dbSet.Find(id);
             Delete(entityToDelete);
         }
 
         public void Delete(T entityToDelete)
         {
             if (_dbContext.Entry(entityToDelete).State == EntityState.Detached)
-            {
                dbSet.Attach(entityToDelete);
-            }
+
             dbSet.Remove(entityToDelete);
         }
 
@@ -105,9 +97,7 @@ namespace CadastroClienteProjetos.Infra.Repository
             if (disposing)
             {
                 if (_dbContext != null)
-                {
                     _dbContext.Dispose();
-                }
             }
         }
 

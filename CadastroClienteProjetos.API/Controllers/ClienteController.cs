@@ -1,5 +1,6 @@
 ﻿using CadastroClienteProjetos.Domain.Entities;
 using CadastroClienteProjetos.Domain.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -12,7 +13,7 @@ namespace CadastroClienteProjetos.API.Controllers
     [ApiController]
     public class ClienteController : ControllerBase
     {
-        IRepository<Cliente> _repository;
+        readonly IRepository<Cliente> _repository;
         public ClienteController(IRepository<Cliente> repository)
         {
             _repository = repository;
@@ -22,10 +23,10 @@ namespace CadastroClienteProjetos.API.Controllers
         public async Task<IActionResult> GetByOne(int? id)
         {
             Cliente cliente = null;
-            string mensagemErro = "";
+            var mensagemErro = "";
 
-            if (id == null)           
-                return BadRequest();            
+            if (id == null)
+                return BadRequest();
 
             try
             {
@@ -49,7 +50,7 @@ namespace CadastroClienteProjetos.API.Controllers
         public ActionResult<IEnumerable<Cliente>> GetDrop()
         {
             IEnumerable<Cliente> cliente = null;
-            string mensagemErro = "";
+            var mensagemErro = "";
 
             try
             {
@@ -73,7 +74,7 @@ namespace CadastroClienteProjetos.API.Controllers
         public async Task<IActionResult> Get()
         {
             List<Cliente> ListaCliente = null;
-            string mensagemErro = "";
+            var mensagemErro = "";
 
             try
             {
@@ -94,14 +95,14 @@ namespace CadastroClienteProjetos.API.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody] Cliente cliente)
+        public async Task<IActionResult> PostAsync([FromBody] Cliente cliente)
         {
-            string mensagemErro = "";
-            bool resultCNPJ = _repository.GetAll().Where(x => x.cnpj == cliente.cnpj).Count() == 0 ? true : false;
+            var mensagemErro = "";
+            var resultCNPJ = _repository.GetAll().Count(x => x.cnpj == cliente.cnpj) == 0 ? true : false;
 
-            if (!ModelState.IsValid || resultCNPJ == false)
+            if (!ModelState.IsValid || !resultCNPJ)
             {
-                mensagemErro = (resultCNPJ == false ? "CNPJ já existe" : cliente.MensagemErro);
+                mensagemErro = !resultCNPJ ? @"CNPJ já existe" : cliente.MensagemErro;
                 return BadRequest(mensagemErro);
             }
             else
@@ -110,7 +111,7 @@ namespace CadastroClienteProjetos.API.Controllers
                 {
                     cliente.dataInscricao = DateTime.Now;
                     _repository.Insert(cliente);
-                    int result = _repository.Save();
+                    var result = _repository.Save();
 
                     if (result <= 0)
                         mensagemErro = "Erro ao salvar o cliente";
@@ -124,29 +125,29 @@ namespace CadastroClienteProjetos.API.Controllers
             if (mensagemErro != "")
                 return BadRequest(mensagemErro);
 
-            return Ok( CreatedAtAction("Get", new { id = cliente.id }, cliente) );
+            return Ok( CreatedAtAction(nameof(Get), new { cliente.id }, cliente) );
         }
 
         [HttpPut]
         public ActionResult<Cliente> Put(Cliente cliente)
         {
-            string mensagemErro = ""; bool resultCNPJ = false;
+            var mensagemErro = ""; var resultCNPJ = false;
 
             try
             {
-                resultCNPJ = _repository.GetAll().Where(x => x.cnpj == cliente.cnpj && x.id == cliente.id).Count() == 1 ? true : false;
+                resultCNPJ = _repository.GetAll().Count(x => x.cnpj == cliente.cnpj && x.id == cliente.id) == 1 ? true : false;
 
-                if (resultCNPJ == false)
-                    resultCNPJ = _repository.GetAll().Where(x => x.cnpj == cliente.cnpj).Count() == 0 ? true : false;
+                if (!resultCNPJ)
+                    resultCNPJ = _repository.GetAll().Count(x => x.cnpj == cliente.cnpj) == 0 ? true : false;
             }
             catch (Exception ex)
             {
                 mensagemErro = ex.Message;
             }
 
-            if (!ModelState.IsValid || resultCNPJ == false)
+            if (!ModelState.IsValid || !resultCNPJ)
             {
-                mensagemErro = (resultCNPJ == false ? "CNPJ já existe" : cliente.MensagemErro);
+                mensagemErro = (!resultCNPJ ? "CNPJ já existe" : cliente.MensagemErro);
                 return BadRequest(mensagemErro);
             }
             else
@@ -155,7 +156,7 @@ namespace CadastroClienteProjetos.API.Controllers
                 {
                     cliente.dataInscricao = DateTime.Now;
                     _repository.Update(cliente);
-                    int result = _repository.Save();
+                    var result = _repository.Save();
 
                     if (result <= 0)
                         mensagemErro = "Erro ao alterar o cliente";
@@ -169,14 +170,14 @@ namespace CadastroClienteProjetos.API.Controllers
             if (mensagemErro != "")
                 return BadRequest(mensagemErro);
 
-            return Ok(CreatedAtAction("Get", new { id = cliente.id }, cliente));
+            return Ok(CreatedAtAction(nameof(Get), new { cliente.id }, cliente));
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int? ID)
         {
-            string mensagemErro = "";
-            Cliente cliente = new Cliente();
+            var mensagemErro = "";
+            var cliente = new Cliente();
 
             if (ID == null)
                 return BadRequest();
@@ -189,7 +190,7 @@ namespace CadastroClienteProjetos.API.Controllers
                     return NotFound();
 
                 _repository.Delete(cliente.id);
-                int result = _repository.Save();
+                var result = _repository.Save();
             }
             catch (Exception ex)
             {

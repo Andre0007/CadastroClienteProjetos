@@ -11,7 +11,7 @@ namespace CadastroClienteProjetos.API.Controllers
     [ApiController]
     public class ProjetoController : ControllerBase
     {
-        IRepository<Projeto> _repository;
+        readonly IRepository<Projeto> _repository;
         public ProjetoController(IRepository<Projeto> repository)
         {
             _repository = repository;
@@ -21,7 +21,7 @@ namespace CadastroClienteProjetos.API.Controllers
         public ActionResult<Projeto> GetByOne(int id)
         {
             Projeto projeto = null;
-            string mensagemErro = "";
+            var mensagemErro = "";
 
             try
             {
@@ -45,7 +45,7 @@ namespace CadastroClienteProjetos.API.Controllers
         public ActionResult<IEnumerable<Projeto>> GetDrop()
         {
             IEnumerable<Projeto> projeto = null;
-            string mensagemErro = "";
+            var mensagemErro = "";
 
             try
             {
@@ -74,8 +74,8 @@ namespace CadastroClienteProjetos.API.Controllers
         [HttpPost]
         public ActionResult<Projeto> Post(Projeto projeto)
         {
-            string mensagemErro = "";
- 
+            var mensagemErro = "";
+
             if (!ModelState.IsValid)
             {
                 mensagemErro = projeto.MensagemErro;
@@ -86,7 +86,7 @@ namespace CadastroClienteProjetos.API.Controllers
                 try
                 {
                     _repository.Insert(projeto);
-                    int result = _repository.Save();
+                    var result = _repository.Save();
 
                     if (result <= 0)
                         mensagemErro = "Erro ao salvar o cliente";
@@ -100,13 +100,13 @@ namespace CadastroClienteProjetos.API.Controllers
             if (mensagemErro != "")
                 return BadRequest(mensagemErro);
 
-            return Ok(CreatedAtAction("Get", new { id = projeto.id }, projeto));
+            return Ok(CreatedAtAction(nameof(Get), new { projeto.id }, projeto));
         }
 
         [HttpPut]
         public ActionResult<Projeto> Put(Projeto projeto)
         {
-            string mensagemErro = "";
+            var mensagemErro = "";
 
             if (!ModelState.IsValid)
             {
@@ -118,7 +118,7 @@ namespace CadastroClienteProjetos.API.Controllers
                 try
                 {
                     _repository.Update(projeto);
-                    int result = _repository.Save();
+                    var result = _repository.Save();
                 }
                 catch (Exception ex)
                 {
@@ -129,14 +129,14 @@ namespace CadastroClienteProjetos.API.Controllers
             if (mensagemErro != "")
                 return BadRequest(mensagemErro);
 
-            return Ok(CreatedAtAction("Get", new { id = projeto.id }, projeto));
+            return Ok(CreatedAtAction(nameof(Get), new { projeto.id }, projeto));
         }
 
         [HttpDelete("{id}")]
         public ActionResult<Projeto> Delete(int ID)
         {
-            string mensagemErro = "";
-            Projeto projeto = new Projeto();
+            var mensagemErro = "";
+            var projeto = new Projeto();
 
             try
             {
@@ -146,7 +146,7 @@ namespace CadastroClienteProjetos.API.Controllers
                     return NotFound();
 
                 _repository.Update(projeto);
-                int result = _repository.Save();
+                var result = _repository.Save();
             }
             catch (Exception ex)
             {

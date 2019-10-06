@@ -32,11 +32,6 @@ namespace CadastroClienteProjetos.API
                 });
             });
 
-            //services.AddSwaggerGen(c =>
-            //{
-            //    c.SwaggerDoc("v1", new Info { Title = "My API", Version = "v1" });
-            //});
-
             services.AddDbContext<SQLServerContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
             services.AddMvc().AddJsonOptions(
@@ -54,14 +49,10 @@ namespace CadastroClienteProjetos.API
 
             // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
             if (env.IsDevelopment())
-                app.UseDeveloperExceptionPage();           
-            else  
+                app.UseDeveloperExceptionPage();
+            else
                 app.UseHsts();
 
-            //app.UseSwagger();
-            //app.UseSwaggerUI(c => {
-            //    c.SwaggerEndpoint("/swagger/v1/swagger.json", "REST API ClienteProjeto");
-            //});
             app.UseHttpsRedirection();
             app.UseMvc();
         }

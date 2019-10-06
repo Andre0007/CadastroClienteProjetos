@@ -19,7 +19,7 @@ namespace CadastroClienteProjetos.Domain.Entities
 
         public int? idCliente { get; set; }
 
-        [ForeignKey("idCliente")]
+        [ForeignKey(nameof(idCliente))]
         public virtual Cliente Cliente { get; set; }
 
         [NotMapped]

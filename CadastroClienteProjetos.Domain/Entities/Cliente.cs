@@ -31,7 +31,7 @@ namespace CadastroClienteProjetos.Domain.Entities
                 yield return new ValidationResult(MensagemErro = "Razao Social é um campo obrigatorio");
             else if(cnpj == "")
                 yield return new ValidationResult(MensagemErro = "cnpj é um campo obrigatorio");
-            else if(Util.Validacao.CNPJ(cnpj) == false)
+            else if(!Util.Validacao.CNPJ(cnpj))
                 yield return new ValidationResult(MensagemErro = "CNPJ Invalido.");
         }
 
