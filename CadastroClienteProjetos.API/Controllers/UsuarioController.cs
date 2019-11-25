@@ -10,24 +10,24 @@ namespace CadastroClienteProjetos.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ProjetoController : ControllerBase
+    public class UsuarioController : ControllerBase
     {
-        private readonly IRepository<Projeto> _repository;
-        public ProjetoController(IRepository<Projeto> repository)
+        private readonly IRepository<Usuario> _repository;
+        public UsuarioController(IRepository<Usuario> repository)
         {
             _repository = repository;
         }
 
+        [Authorize]
         [HttpGet("{id}")]
-        [Authorize]
-        public ActionResult<Projeto> GetByOne(int id)
+        public ActionResult<Usuario> GetByOne(int id)
         {
-            Projeto projeto = null;
+            Usuario usuario = null;
             var mensagemErro = "";
 
             try
             {
-                projeto = _repository.GetById(id);
+                usuario = _repository.GetById(id);
             }
             catch (Exception ex)
             {
@@ -37,60 +37,36 @@ namespace CadastroClienteProjetos.API.Controllers
             if (mensagemErro != "")
                 return BadRequest(mensagemErro);
 
-            if (projeto == null)
+            if (usuario == null)
                 return NotFound();
 
-            return projeto;
+            return usuario;
         }
 
-        [HttpPost("{id}")]
         [Authorize]
-        public ActionResult<IEnumerable<Projeto>> GetDrop()
-        {
-            IEnumerable<Projeto> projeto = null;
-            var mensagemErro = "";
-
-            try
-            {
-                projeto = _repository.GetAll().ToList();
-            }
-            catch (Exception ex)
-            {
-                mensagemErro = ex.Message;
-            }
-
-            if (mensagemErro != "")
-                return BadRequest(mensagemErro);
-
-            if (projeto == null)
-                return NotFound();
-
-            return projeto.ToArray();
-        }
-
         [HttpGet]
-        [Authorize]
-        public ActionResult<List<Projeto>> Get()
+        public ActionResult<List<Usuario>> Get()
         {
             return _repository.GetAll().ToList();
         }
 
+        [AllowAnonymous]
         [HttpPost]
-        [Authorize]
-        public ActionResult<Projeto> Post(Projeto projeto)
+        public ActionResult<Usuario> Post(Usuario usuario)
         {
             var mensagemErro = "";
 
             if (!ModelState.IsValid)
             {
-                mensagemErro = projeto.MensagemErro;
+                mensagemErro = usuario.MensagemErro;
                 return BadRequest(mensagemErro);
             }
             else
             {
                 try
                 {
-                    _repository.Insert(projeto);
+                    usuario.senha = Domain.Util.Security.EncodePassword(usuario.senha.Trim());
+                    _repository.Insert(usuario);
                     var result = _repository.Save();
 
                     if (result <= 0)
@@ -105,25 +81,25 @@ namespace CadastroClienteProjetos.API.Controllers
             if (mensagemErro != "")
                 return BadRequest(mensagemErro);
 
-            return Ok(CreatedAtAction(nameof(Get), new { projeto.id }, projeto));
+            return Ok(CreatedAtAction(nameof(Get), new { usuario.id }, usuario));
         }
 
-        [HttpPut]
         [Authorize]
-        public ActionResult<Projeto> Put(Projeto projeto)
+        [HttpPut]
+        public ActionResult<Usuario> Put(Usuario usuario)
         {
             var mensagemErro = "";
 
             if (!ModelState.IsValid)
             {
-                mensagemErro = projeto.MensagemErro;
+                mensagemErro = usuario.MensagemErro;
                 return BadRequest(mensagemErro);
             }
             else
             {
                 try
                 {
-                    _repository.Update(projeto);
+                    _repository.Update(usuario);
                     var result = _repository.Save();
                 }
                 catch (Exception ex)
@@ -135,24 +111,24 @@ namespace CadastroClienteProjetos.API.Controllers
             if (mensagemErro != "")
                 return BadRequest(mensagemErro);
 
-            return Ok(CreatedAtAction(nameof(Get), new { projeto.id }, projeto));
+            return Ok(CreatedAtAction(nameof(Get), new { usuario.id }, usuario));
         }
 
-        [HttpDelete("{id}")]
         [Authorize]
-        public ActionResult<Projeto> Delete(int ID)
+        [HttpDelete("{id}")]
+        public ActionResult<Usuario> Delete(int ID)
         {
             var mensagemErro = "";
-            var projeto = new Projeto();
+            var usuario = new Usuario();
 
             try
             {
-                projeto = _repository.GetById(ID);
+                usuario = _repository.GetById(ID);
 
-                if (projeto == null)
+                if (usuario == null)
                     return NotFound();
 
-                _repository.Update(projeto);
+                _repository.Delete(usuario.id);
                 var result = _repository.Save();
             }
             catch (Exception ex)
@@ -163,7 +139,7 @@ namespace CadastroClienteProjetos.API.Controllers
             if (mensagemErro != "")
                 return BadRequest(mensagemErro);
 
-            return Ok(projeto);
+            return Ok(usuario);
         }
 
     }

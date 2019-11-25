@@ -32,13 +32,10 @@ namespace CadastroClienteProjetos.API
                 });
             });
 
+            services.AddAntiforgery(options =>{ options.HeaderName = "X-XSRF-TOKEN"; });
             services.AddDbContext<SQLServerContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
-
-            services.AddMvc().AddJsonOptions(
-                              options => options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
-            ).SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
-
             services.AddMvc().AddJsonOptions(options => options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore).SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.AddMvc(options =>{ options.Filters.Add(new ValidateAntiForgeryTokenAttribute()); });
             services.AddScoped(typeof(IRepository<>), typeof(BaseRepository<>));
         }
 

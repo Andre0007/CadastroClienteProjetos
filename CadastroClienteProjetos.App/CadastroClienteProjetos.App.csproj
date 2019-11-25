@@ -28,9 +28,14 @@
     <None Remove="ClientApp\src\cliente\cliente-component.ts" />
     <None Remove="ClientApp\src\domain\Cliente.ts" />
     <None Remove="ClientApp\src\domain\Projeto.ts" />
-    <None Remove="ClientApp\src\projeto\projeto-component.ts" />
+    <None Remove="ClientApp\src\Pages\Home\home-component.ts" />
+    <None Remove="ClientApp\src\Pages\Login\login-component.ts" />
+    <None Remove="ClientApp\src\Pages\Projeto\projeto-component.ts" />
+    <None Remove="ClientApp\src\Pages\Usuario\usuario-component.ts" />
     <None Remove="ClientApp\src\service\cliente.service.ts" />
+    <None Remove="ClientApp\src\service\home.service.ts" />
     <None Remove="ClientApp\src\service\projeto.service.ts" />
+    <None Remove="ClientApp\src\service\usuario.service.ts" />
     <None Remove="ClientApp\src\Util\GenericValidator.ts" />
   </ItemGroup>
 
@@ -38,9 +43,14 @@
     <TypeScriptCompile Include="ClientApp\src\cliente\cliente-component.ts" />
     <TypeScriptCompile Include="ClientApp\src\domain\Cliente.ts" />
     <TypeScriptCompile Include="ClientApp\src\domain\Projeto.ts" />
-    <TypeScriptCompile Include="ClientApp\src\projeto\projeto-component.ts" />
+    <TypeScriptCompile Include="ClientApp\src\Pages\Home\home-component.ts" />
+    <TypeScriptCompile Include="ClientApp\src\Pages\Login\login-component.ts" />
+    <TypeScriptCompile Include="ClientApp\src\Pages\Projeto\projeto-component.ts" />
+    <TypeScriptCompile Include="ClientApp\src\Pages\Usuario\usuario-component.ts" />
     <TypeScriptCompile Include="ClientApp\src\service\cliente.service.ts" />
+    <TypeScriptCompile Include="ClientApp\src\service\home.service.ts" />
     <TypeScriptCompile Include="ClientApp\src\service\projeto.service.ts" />
+    <TypeScriptCompile Include="ClientApp\src\service\usuario.service.ts" />
     <TypeScriptCompile Include="ClientApp\src\Util\GenericValidator.ts" />
   </ItemGroup>
 

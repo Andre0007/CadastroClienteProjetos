@@ -13,13 +13,14 @@ namespace CadastroClienteProjetos.API.Controllers
     [ApiController]
     public class ClienteController : ControllerBase
     {
-        readonly IRepository<Cliente> _repository;
+        private readonly IRepository<Cliente> _repository;
         public ClienteController(IRepository<Cliente> repository)
         {
             _repository = repository;
         }
 
         [HttpGet("{id}")]
+        //[Authorize]
         public async Task<IActionResult> GetByOne(int? id)
         {
             Cliente cliente = null;
@@ -47,6 +48,7 @@ namespace CadastroClienteProjetos.API.Controllers
         }
 
         [HttpPost("{id}")]
+        //[Authorize]
         public ActionResult<IEnumerable<Cliente>> GetDrop()
         {
             IEnumerable<Cliente> cliente = null;
@@ -71,6 +73,7 @@ namespace CadastroClienteProjetos.API.Controllers
         }
 
         [HttpGet]
+        //[Authorize]
         public async Task<IActionResult> Get()
         {
             List<Cliente> ListaCliente = null;
@@ -95,6 +98,7 @@ namespace CadastroClienteProjetos.API.Controllers
         }
 
         [HttpPost]
+        //[Authorize]
         public async Task<IActionResult> PostAsync([FromBody] Cliente cliente)
         {
             var mensagemErro = "";
@@ -129,6 +133,7 @@ namespace CadastroClienteProjetos.API.Controllers
         }
 
         [HttpPut]
+        //[Authorize]
         public ActionResult<Cliente> Put(Cliente cliente)
         {
             var mensagemErro = ""; var resultCNPJ = false;
@@ -174,6 +179,7 @@ namespace CadastroClienteProjetos.API.Controllers
         }
 
         [HttpDelete("{id}")]
+        //[Authorize]
         public async Task<IActionResult> Delete(int? ID)
         {
             var mensagemErro = "";

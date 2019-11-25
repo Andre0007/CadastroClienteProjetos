@@ -1,25 +1,35 @@
 import { Component, OnInit } from '@angular/core';
-import Cliente from '../domain/Cliente';
-import { ClienteService } from '../service/cliente.service';
-import { FormGroup, FormBuilder, Validators, FormControl  } from '@angular/forms';
-import { GenericValidator } from '../Util/GenericValidator';
+import Projeto from '../../domain/Projeto';
+import { ProjetoService } from '../../service/projeto.service';
+import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
+import { GenericValidator } from '../../Util/GenericValidator';
 import Swal from 'sweetalert2';
 import * as $ from 'jquery';
 declare var $: any;
 
 @Component({
   selector: 'app-cliente-crud',
-  templateUrl: './Cliente.html'
+  templateUrl: './projeto-component.html',
+  styleUrls: ['./projeto-component.css']
 })
-export class ClienteComponent implements OnInit {
-  clientes: Cliente[];
-  cliente: any = {};
+export class ProjetoComponent implements OnInit {
+
+  projetos: Projeto[];
+  projeto: any = {};
   angForm: FormGroup;
   public paginaAtual = 1;
 
   constructor(private fb: FormBuilder,
-    private bs: ClienteService) {
+    private bs: ProjetoService) {
     this.createForm();
+  }
+
+  ngOnInit() {
+    this.bs
+      .getProjeto()
+      .subscribe((data: Projeto[]) => {
+        this.projeto = data;
+      });
   }
 
   createForm() {
@@ -64,29 +74,29 @@ export class ClienteComponent implements OnInit {
   }
 
   cleanForm() {
-    this.cliente.razaoSocial = '';
-    this.cliente.cnpj = '';
+    this.projeto.nomeProjeto = '';
+    this.projeto.idCliente = '';
   }
 
-  addCliente(razaoSocial, cnpj) {    
+  addCliente(razaoSocial, cnpj) {
     this.bs.addCliente(razaoSocial, cnpj).subscribe(
       (next: Response) => {
         this.CloseModal('Inserido', next), this.ngOnInit()
       },
       (erro: Response) => {
-        this.CloseModal('Inserir', erro);       
+        this.CloseModal('Inserir', erro);
       });
   }
 
   getClienteById(id) {
     this.ShowModal(id);
-    this.bs.editCliente(id).subscribe((data: Cliente) => {
-      this.cliente = data;
+    this.bs.editProjeto(id).subscribe((data: Projeto) => {
+      this.projeto = data;
     });
   }
 
   updateCliente(razaoSocial, cnpj) {
-    this.bs.updateCliente(razaoSocial, cnpj, this.cliente.id).subscribe(
+    this.bs.updateProjeto(razaoSocial, cnpj, this.projeto.id).subscribe(
       (next: Response) => {
         this.CloseModal('Atualizado', next), this.ngOnInit()
       },
@@ -96,21 +106,13 @@ export class ClienteComponent implements OnInit {
   }
 
   deleteCliente(id) {
-    this.bs.deleteCliente(id).subscribe(
+    this.bs.deleteProjeto(id).subscribe(
       (next: Response) => {
         this.CloseModal('Deletado', next), this.ngOnInit()
       },
       (erro: Response) => {
         this.CloseModal('Deletar', erro)
       });
-  }
-
-  ngOnInit() {
-    this.bs
-      .getCliente()
-      .subscribe((data: Cliente[]) => {
-        this.clientes = data;
-      });    
   }
 
 }

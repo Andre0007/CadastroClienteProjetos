@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -106,9 +109,8 @@ namespace CadastroClienteProjetos.Domain.Util
         {
             // Check for empty string.
             if (string.IsNullOrEmpty(title))
-            {
                 return string.Empty;
-            }
+
             // Return char and concat substring.
             return char.ToUpper(title[0]) + title.Substring(1);
         }
@@ -200,27 +202,59 @@ namespace CadastroClienteProjetos.Domain.Util
         }
 
         /// <summary>
-        /// Redimenciona o tamanho da imagem, especial para o file upload
+        /// Redimenciona uma imagem com os parametros que deseja customizar
         /// </summary>
-        /// <param name="imagePath"></param>
-        /// <param name="largura"></param>
-        /// <param name="altura"></param>
-        /// <param name="prefixo"></param>
+        /// <param name="current"></param>
+        /// <param name="maxWidth"></param>
+        /// <param name="maxHeight"></param>
         /// <returns></returns>
-        //public static string resizeImageAndSave(string imagePath, int largura, int altura, string prefixo)
-        //{
-        //    System.Drawing.Image fullSizeImg = System.Drawing.Image.FromFile(imagePath);
-        //    var thumbnailImg = new Bitmap(largura, altura);
-        //    var thumbGraph = Graphics.FromImage(thumbnailImg);
-        //    thumbGraph.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.HighQuality;
-        //    thumbGraph.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.HighQuality;
-        //    thumbGraph.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.HighQualityBicubic;
-        //    var imageRectangle = new Rectangle(0, 0, largura, altura); thumbGraph.DrawImage(fullSizeImg, imageRectangle);
-        //    string targetPath = imagePath.Replace(Path.GetFileNameWithoutExtension(imagePath), Path.GetFileNameWithoutExtension(imagePath) + prefixo);
-        //    thumbnailImg.Save(targetPath, System.Drawing.Imaging.ImageFormat.Jpeg);
-        //    thumbnailImg.Dispose();
-        //    return targetPath;
-        //}
+        public static Image Resize(this Image current, int maxWidth, int maxHeight)
+        {
+            int width, height;
+
+            #region [reckon size]
+
+            if (current.Width > current.Height)
+            {
+                width = maxWidth;
+                height = Convert.ToInt32(current.Height * maxHeight / (double)current.Width);
+            }
+            else
+            {
+                width = Convert.ToInt32(current.Width * maxWidth / (double)current.Height);
+                height = maxHeight;
+            }
+
+            #endregion
+
+            #region [get resized bitmap]
+
+            var canvas = new Bitmap(width, height);
+            using (var graphics = Graphics.FromImage(canvas))
+            {
+                graphics.CompositingQuality = CompositingQuality.HighSpeed;
+                graphics.InterpolationMode = InterpolationMode.HighQualityBicubic;
+                graphics.CompositingMode = CompositingMode.SourceCopy;
+                graphics.DrawImage(current, 0, 0, width, height);
+            }
+            return canvas;
+
+            #endregion
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="current"></param>
+        /// <returns></returns>
+        public static byte[] ToByteArray(this Image current)
+        {
+            using (var stream = new MemoryStream())
+            {
+                current.Save(stream, current.RawFormat);
+                return stream.ToArray();
+            }
+        }
 
         /// <summary>
         /// Retorna o nome do valor informado, transformado em palavras a quantidade em reais
@@ -229,7 +263,7 @@ namespace CadastroClienteProjetos.Domain.Util
         /// <returns></returns>
         public static string toExtenso(decimal valor)
         {
-          if ((valor <= 0M) | (valor >= 1000000000000000M))
+            if ((valor <= 0M) | (valor >= 1000000000000000M))
                 return "Valor n\x00e3o suportado pelo sistema.";
 
             var str = valor.ToString("000000000000000.00");
@@ -492,6 +526,5 @@ namespace CadastroClienteProjetos.Domain.Util
             }
             return str;
         }
-
     }
 }
